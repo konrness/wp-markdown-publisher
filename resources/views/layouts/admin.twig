@@ -1,0 +1,13 @@
+<script type="text/javascript">
+    jQuery(function() {
+        jQuery('.js-fld-datetime').datetimepicker({
+            format: "Y-m-d H:i:s",
+            roundTime: 'round'
+        });
+    });
+</script>
+<div class="wrap">
+    {% include "shared/notices.twig" %}
+
+    {% block body %}{% endblock %}
+</div>

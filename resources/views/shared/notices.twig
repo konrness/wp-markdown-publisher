@@ -1,0 +1,18 @@
+
+<ul>
+    {% if notices %}
+        {% for notice in notices %}
+            <li>
+                <div class="updated">{{ notice|raw }}</div>
+            </li>
+        {% endfor %}
+    {% endif %}
+
+    {% if errors %}
+        {% for error in errors %}
+            <li>
+                <div class="error">{{ error|raw }}</div>
+            </li>
+        {% endfor %}
+    {% endif %}
+</ul>
