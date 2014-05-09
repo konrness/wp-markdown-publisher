@@ -7,7 +7,6 @@ use Doctrine\Common\Cache\ArrayCache;
 use Fabricius\Events;
 use Fabricius\Formatter\Formatter;
 use Fabricius\Formatter\Handler\MarkdownPhpHandler;
-use Fabricius\Formatter\Handler\TextileHandler;
 use Fabricius\LibraryBuilder;
 use Fabricius\Loader\FileLoader;
 use Fabricius\Validator\Validator;
@@ -48,5 +47,9 @@ $content = $library->getRepository('MarkdownPublisher\WordPress\Post')->query();
 
 foreach ($content->toArray() as $contentItem) {
     // Prints 'Example'.
-    var_dump($contentItem);
+    var_dump($contentItem->toWpPost());
+    echo "\n";
+    echo $contentItem->toWpPost()['post_content'];
+    echo "\n\n";
+    echo $contentItem->toWpPost()['post_excerpt'];
 }

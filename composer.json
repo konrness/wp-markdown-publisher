@@ -16,7 +16,8 @@
         "php": ">=5.3",
         "nerdery/wp-plugin-framework": "dev-master",
         "fabricius/fabricius": "~1.0",
-        "michelf/php-markdown": "~1.4"
+        "michelf/php-markdown": "~1.4",
+        "johnpbloch/wordpress": "3.9.*@dev"
     },
     "minimum-stability": "dev",
     "autoload": {
