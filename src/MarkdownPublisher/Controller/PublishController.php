@@ -3,6 +3,7 @@
 namespace MarkdownPublisher\Controller;
 
 use MarkdownPublisher\WordPress\Repository\Author;
+use MarkdownPublisher\WordPress\Repository\Category;
 use MarkdownPublisher\WordPress\Transformer\ContentItemTransformer;
 use Nerdery\Plugin\Controller\Controller;
 use MarkdownPublisher\Content\ContentItem;
@@ -75,6 +76,7 @@ class PublishController extends Controller
 
             $transformer->setLogger($logger);
             $transformer->setAuthorRepository(new Author($proxy));
+            $transformer->setCategoryRepository(new Category($proxy));
             $transformer->setContentItem($contentItem);
 
             $post = $transformer->transform();

@@ -27,6 +27,11 @@ class ContentItemTransformer
     protected $authorRepository;
 
     /**
+     * @var CategoryRepository
+     */
+    protected $categoryRepository;
+
+    /**
      * @var LoggerInterface
      */
     protected $logger = array();
@@ -59,6 +64,7 @@ class ContentItemTransformer
          */
         $this->transformAuthor($contentItem, $post);
 
+        $this->transformCategories($contentItem, $post);
         /*
         $post->categories
 
@@ -92,6 +98,27 @@ class ContentItemTransformer
             throw new \Exception("AuthorRepository not set");
         }
         return $this->authorRepository;
+    }
+
+    /**
+     * @param \MarkdownPublisher\WordPress\Repository\Category $categoryRepository
+     * @return $this;
+     */
+    public function setCategoryRepository($categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+        return $this;
+    }
+
+    /**
+     * @return \MarkdownPublisher\WordPress\Repository\Category
+     */
+    public function getCategoryRepository()
+    {
+        if (!$this->categoryRepository) {
+            throw new \Exception("CategoryRepository not set");
+        }
+        return $this->categoryRepository;
     }
 
     /**
@@ -144,6 +171,7 @@ class ContentItemTransformer
     {
         if (! $contentItem->getAuthor()) {
             $this->getLogger()->notice("No author provided for content item: " . $contentItem->getSlug());
+            return;
         }
 
         $post->post_author = $this->getAuthorRepository()->getAuthorIDByUsername(
@@ -155,6 +183,42 @@ class ContentItemTransformer
         } else {
             $this->getLogger()->info("Author '" . $contentItem->getAuthor() . "' transformed to " . $post->post_author);
         }
+    }
+
+    /**
+     * @param ContentItem $contentItem
+     * @param Post $post
+     */
+    protected function transformCategories(ContentItem $contentItem, Post $post)
+    {
+        $categories = $contentItem->getCategories();
+
+        if (! $categories) {
+            $this->getLogger()->info("No categories provided for content item: " . $contentItem->getSlug());
+            return;
+        }
+
+        if (! is_array($categories)) {
+            $this->getLogger()->warning("Invalid format for categories provided for content item: " . $contentItem->getSlug());
+            return;
+        }
+
+        $categoryIds = array();
+        foreach ($categories as $category) {
+            $category = trim($category);
+
+            // @todo Feature: create the category if not found
+            $categoryId = $this->getCategoryRepository()->getCategoryIDByTitleOrSlug($category);
+
+            if ($categoryId) {
+                $categoryIds[] = $categoryId;
+                $this->getLogger()->info("Category '$category' transformed to $categoryId");
+            } else {
+                $this->getLogger()->warning("Category not found with slug/title '" . $category . "' in content item: " . $contentItem->getSlug());
+
+            }
+        }
+
     }
 
 } 

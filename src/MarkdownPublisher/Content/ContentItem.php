@@ -114,7 +114,7 @@ class ContentItem
      *
      * @todo Parse this from comma-separated list of categories to array of category ids
      *
-     * @var string
+     * @var string[]
      * @Fabricius\Parameter
      */
     private $categories;
@@ -179,7 +179,7 @@ class ContentItem
     }
 
     /**
-     * @param string $categories
+     * @param string[] $categories
      * @return $this;
      */
     public function setCategories($categories)
@@ -189,7 +189,7 @@ class ContentItem
     }
 
     /**
-     * @return string
+     * @return string[]
      */
     public function getCategories()
     {
