@@ -13,7 +13,7 @@ class SettingsController extends Controller
     /*
      * Constants
      */
-    const SETTINGS_PAGE_SLUG = 'mdpublisher_settings';
+    const SLUG_PAGE_SETTINGS = 'mdpublisher_settings';
 
     const SETTING_GIT_REPO_PATH = 'git_repo_path';
     const SETTING_GIT_REPO_PATH_LABEL = 'Git Repository Path';
@@ -67,7 +67,7 @@ class SettingsController extends Controller
         $proxy = $this->getProxy();
         $slug = $this->getContainer()->getSlug();
         foreach ($this->settings as $field) {
-            $proxy->registerSetting(self::SETTINGS_PAGE_SLUG, $slug . $field['name']);
+            $proxy->registerSetting(self::SLUG_PAGE_SETTINGS, $slug . $field['name']);
         }
     }
 
@@ -85,7 +85,7 @@ class SettingsController extends Controller
             'Markdown Publisher',
             'Markdown Publisher',
             'manage_options',
-            self::SETTINGS_PAGE_SLUG,
+            self::SLUG_PAGE_SETTINGS,
             function () use ($controller) {
                 echo $controller->indexAction();
             }
@@ -102,12 +102,13 @@ class SettingsController extends Controller
         $proxy = $this->getProxy();
         $container = $this->getContainer();
 
-        $settingsMarkup = $proxy->settingsFields(self::SETTINGS_PAGE_SLUG);
+        $settingsMarkup = $proxy->settingsFields(self::SLUG_PAGE_SETTINGS);
 
         $fieldMarkup = $this->buildFieldMarkup();
         $output = array(
             'settingsFormHiddenMarkup' => $settingsMarkup,
             'settingsFormFieldMarkup' => $fieldMarkup,
+            'publishUrl' => $proxy->adminLink('mdpublisher_publish'),
         );
 
         return $this->render('settings/index.twig', $output);

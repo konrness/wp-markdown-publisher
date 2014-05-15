@@ -40,16 +40,17 @@ function bootstrap()
      * necessary WordPress event calls they need to respond to.
      */
     $plugin['controller.settings'] = new Controller\SettingsController($plugin);
+    $plugin['controller.publish'] = new Controller\PublishController($plugin);
 
     /*
      * Register routes
      */
-    $plugin->registerRoute(
-        new Route(
-            '^mdpublisher/?',
-            'controller.settings:indexAction'
-        )
-    );
+//    $plugin->registerRoute(
+//        new Route(
+//            '^mdpublisher/?',
+//            'controller.settings:indexAction'
+//        )
+//    );
 
     $plugin->run();
 }
