@@ -15,30 +15,22 @@ class SettingsController extends Controller
      */
     const SETTINGS_PAGE_SLUG = 'mdpublisher_settings';
 
-    const SETTING_PLUGIN_NAME = 'plugin_name';
-    const SETTING_PLUGIN_NAME_LABEL = 'Plugin Name';
+    const SETTING_GIT_REPO_PATH = 'git_repo_path';
+    const SETTING_GIT_REPO_PATH_LABEL = 'Git Repository Path';
 
-    const SETTING_PLUGIN_DESCRIPTION = 'plugin_description';
-    const SETTING_PLUGIN_DESCRIPTION_LABEL = 'Description Area';
-
-    const SETTING_PLUGIN_VERSION = 'plugin_version';
-    const SETTING_PLUGIN_VERSION_LABEL = 'Plugin Version';
+    const SETTING_GIT_REPO_BRANCH = 'git_repo_branch';
+    const SETTING_GIT_REPO_BRANCH_LABEL = 'Git Repoository Branch';
 
     private $settings = array(
         array(
-            'name' => self::SETTING_PLUGIN_NAME,
-            'label' => self::SETTING_PLUGIN_NAME_LABEL,
-            'template' => 'settings/fields/plugin-name.twig',
+            'name' => self::SETTING_GIT_REPO_PATH,
+            'label' => self::SETTING_GIT_REPO_PATH_LABEL,
+            'template' => 'settings/fields/form-text.twig',
         ),
         array(
-            'name' => self::SETTING_PLUGIN_DESCRIPTION,
-            'label' => self::SETTING_PLUGIN_DESCRIPTION_LABEL,
-            'template' => 'settings/fields/plugin-description.twig',
-        ),
-        array(
-            'name' => self::SETTING_PLUGIN_VERSION,
-            'label' => self::SETTING_PLUGIN_VERSION_LABEL,
-            'template' => 'settings/fields/plugin-version.twig',
+            'name' => self::SETTING_GIT_REPO_BRANCH,
+            'label' => self::SETTING_GIT_REPO_BRANCH_LABEL,
+            'template' => 'settings/fields/form-text.twig',
         )
     );
 
@@ -75,7 +67,7 @@ class SettingsController extends Controller
         $proxy = $this->getProxy();
         $slug = $this->getContainer()->getSlug();
         foreach ($this->settings as $field) {
-            $proxy->registerSetting(self::SETTINGS_PAGE_SLUG, $slug . '_' . $field['name']);
+            $proxy->registerSetting(self::SETTINGS_PAGE_SLUG, $slug . $field['name']);
         }
     }
 
@@ -111,10 +103,11 @@ class SettingsController extends Controller
         $container = $this->getContainer();
 
         $settingsMarkup = $proxy->settingsFields(self::SETTINGS_PAGE_SLUG);
+
         $fieldMarkup = $this->buildFieldMarkup();
         $output = array(
-            'settingsMarkup' => $settingsMarkup,
-            'fieldMarkup' => $fieldMarkup,
+            'settingsFormHiddenMarkup' => $settingsMarkup,
+            'settingsFormFieldMarkup' => $fieldMarkup,
         );
 
         return $this->render('settings/index.twig', $output);
@@ -130,14 +123,15 @@ class SettingsController extends Controller
         $proxy = $this->getProxy();
         $container = $this->getContainer();
         $viewRenderer = $container->getViewRenderer();
+        $slug = $container->getSlug();
         $fieldMarkup = '';
         foreach ($this->settings as $field) {
             $fieldMarkup .= $viewRenderer->render(
                 $field['template'],
                 array(
-                    'name' => $field['name'],
+                    'name'  => $slug . $field['name'],
                     'label' => $field['label'],
-                    'value' => $proxy->getOption($field['name']),
+                    'value' => $proxy->getOption($slug . $field['name']),
                 )
             );
         }

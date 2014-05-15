@@ -23,4 +23,19 @@
     <p>
         Lorem Ipsem
     </p>
+
+    <h3>Settings</h3>
+
+    <div class="wrap">
+        <form method="post" action="options.php">
+            {{settingsFormHiddenMarkup|raw}}
+            <table class="form-table">
+                {{settingsFormFieldMarkup|raw}}
+            </table>
+            <p class="submit">
+                <input type="submit" class="button-primary" value="Save Changes" />
+            </p>
+        </form>
+    </div>
+
 {% endblock %}
