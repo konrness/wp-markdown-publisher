@@ -2,8 +2,7 @@
 
 namespace MarkdownPublisher\Controller;
 
-use MarkdownPublisher\WordPress\Repository\Author;
-use MarkdownPublisher\WordPress\Repository\Category;
+use MarkdownPublisher\WordPress\Repository\Post;
 use MarkdownPublisher\WordPress\Transformer\ContentItemTransformer;
 use Nerdery\Plugin\Controller\Controller;
 use MarkdownPublisher\Content\ContentItem;
@@ -63,43 +62,51 @@ class PublishController extends Controller
 
         $logger->info("In PublishController");
 
+        // set timezone so yaml parsing can parse dates correctly
+        $oldTimezone = date_default_timezone_get();
+        date_default_timezone_set('America/Chicago');
+
         $contentItems = $library->getRepository('MarkdownPublisher\Content\ContentItem')->query();
+
+        /** @var Post $postRepository */
+        $postRepository = $container['repository.post'];
+
+        // transform parsed data to WordPress posts
+        $transformer = new ContentItemTransformer();
+
+        $transformer->setLogger($logger);
+        $transformer->setAuthorRepository($container['repository.author']);
+        $transformer->setCategoryRepository($container['repository.category']);
+        $transformer->setPostRepository($postRepository);
 
         $updatedContent = array();
         $insertedContent = array();
+        $i = 0;
         foreach ($contentItems as $contentItem)
         {
+            $logger->info("---------------------------");
+            $logger->info("Starting content item #" . ++$i);
+            $logger->info("---------------------------");
+
             /** @var ContentItem $contentItem */
 
-            // transform parsed data to WordPress posts
-            $transformer = new ContentItemTransformer();
-
-            $transformer->setLogger($logger);
-            $transformer->setAuthorRepository(new Author($proxy));
-            $transformer->setCategoryRepository(new Category($proxy));
             $transformer->setContentItem($contentItem);
 
             $post = $transformer->transform();
 
-            /*
-            // find an existing page
-            $search = array(
-                'name' => $post->post_name,
-                'post_type' => $post->post_type,
-                'posts_per_page' => 1,
-            );
-            $existingPost = \get_posts($search);
+            $isInserted = $postRepository->insertOrUpdate($post);
 
-            if (! $existingPost) {
-                \wp_insert_post($contentItem);
-                $insertedContent[] = $contentItem;
+            if ($isInserted) {
+                $logger->info("Inserted new " . $post->post_type . " with slug '" . $post->post_name . "'");
+                $insertedContent[] = $post;
             } else {
-                $contentItem['ID'] = $existingPost[0]->ID;
-                \wp_update_post($contentItem);
-                $updatedContent[] = $contentItem;
+                $logger->info("Updated existing " . $post->post_type . " with slug '" . $post->post_name . "'");
+                $updatedContent[] = $post;
             }
-            */
         }
+
+        // return timezone
+        date_default_timezone_set($oldTimezone);
 
         // format log contents
         /** @var TestHandler $logHandler */

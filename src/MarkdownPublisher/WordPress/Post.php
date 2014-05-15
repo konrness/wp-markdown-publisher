@@ -14,7 +14,6 @@ class Post
     /**
      * Not Implemented Yet
      *
-    'ID',             // [ <post id> ] // Are you updating an existing post?
     'guid',           // // Skip this and let Wordpress handle it, usually.
     'to_ping',        // // Space or carriage return-separated list of URLs to ping. Default empty string.
     'pinged',         // // Space or carriage return-separated list of URLs that have been pinged. Default empty string.
@@ -24,6 +23,7 @@ class Post
     'post_date_gmt',  // [ Y-m-d H:i:s ] // The time post was made, in GMT.
     'tax_input'      => [ array( <taxonomy> => <array | string> ) ] // For custom taxonomies. Default empty.
      */
+    public $ID;
 
     /**
      * The title of your post.

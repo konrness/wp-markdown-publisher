@@ -14,6 +14,9 @@ require_once 'vendor/autoload.php';
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use MarkdownPublisher\WordPress\Proxy;
+use MarkdownPublisher\WordPress\Repository\Author;
+use MarkdownPublisher\WordPress\Repository\Category;
+use MarkdownPublisher\WordPress\Repository\Post;
 use Monolog\Handler\BufferHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
@@ -32,6 +35,8 @@ use Monolog\Handler\StreamHandler;
  */
 function bootstrap()
 {
+    ini_set('xdebug.var_display_max_depth', 20);
+
     $factory = new Factory(array(
         'templatePath' => dirname(__FILE__) . '/resources/views',
         'prefix' => 'mdpublisher_',
@@ -88,6 +93,18 @@ function bootstrap()
         $library->registerRepository('MarkdownPublisher\Content\ContentItem', $loader, $cache);
 
         return $library;
+    };
+
+    $plugin['repository.post'] = function($plugin) {
+        return new Post($plugin['wp-proxy']);
+    };
+
+    $plugin['repository.category'] = function($plugin) {
+        return new Category($plugin['wp-proxy']);
+    };
+
+    $plugin['repository.author'] = function($plugin) {
+        return new Author($plugin['wp-proxy']);
     };
 
     /*

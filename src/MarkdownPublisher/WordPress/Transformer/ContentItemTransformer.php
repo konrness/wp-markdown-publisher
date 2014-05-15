@@ -11,6 +11,8 @@ namespace MarkdownPublisher\WordPress\Transformer;
 use MarkdownPublisher\WordPress\Post;
 use MarkdownPublisher\Content\ContentItem;
 use MarkdownPublisher\WordPress\Repository\Author as AuthorRepository;
+use MarkdownPublisher\WordPress\Repository\Post as PostRepository;
+use MarkdownPublisher\WordPress\Repository\Category as CategoryRepository;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -30,6 +32,12 @@ class ContentItemTransformer
      * @var CategoryRepository
      */
     protected $categoryRepository;
+
+    /**
+     * @var PostRepository
+     */
+    protected $postRepository;
+
 
     /**
      * @var LoggerInterface
@@ -58,6 +66,7 @@ class ContentItemTransformer
         $post->post_status   = $contentItem->getStatus();
         $post->page_title    = $contentItem->getTitle();
         $post->post_type     = $contentItem->getType();
+        $post->tags_input    = $contentItem->getTags();
 
         /**
          * Complex transformations
@@ -65,15 +74,14 @@ class ContentItemTransformer
         $this->transformAuthor($contentItem, $post);
 
         $this->transformCategories($contentItem, $post);
-        /*
-        $post->categories
 
-        $post->created
+        $this->transformCreatedDate($contentItem, $post);
 
-        $post->parent
-
-        $post->tags
-        */
+        /**
+         * @todo This naive process assumes that the parent already exists.
+         * Improve to understand dependencies and run in the correct order.
+         */
+        $this->transformParent($contentItem, $post);
 
         return $post;
 
@@ -90,7 +98,7 @@ class ContentItemTransformer
     }
 
     /**
-     * @return \MarkdownPublisher\WordPress\Repository\Author
+     * @return AuthorRepository
      */
     public function getAuthorRepository()
     {
@@ -101,7 +109,7 @@ class ContentItemTransformer
     }
 
     /**
-     * @param \MarkdownPublisher\WordPress\Repository\Category $categoryRepository
+     * @param CategoryRepository $categoryRepository
      * @return $this;
      */
     public function setCategoryRepository($categoryRepository)
@@ -111,7 +119,7 @@ class ContentItemTransformer
     }
 
     /**
-     * @return \MarkdownPublisher\WordPress\Repository\Category
+     * @return CategoryRepository
      */
     public function getCategoryRepository()
     {
@@ -119,6 +127,27 @@ class ContentItemTransformer
             throw new \Exception("CategoryRepository not set");
         }
         return $this->categoryRepository;
+    }
+
+    /**
+     * @param PostRepository $postRepository
+     * @return $this;
+     */
+    public function setPostRepository($postRepository)
+    {
+        $this->postRepository = $postRepository;
+        return $this;
+    }
+
+    /**
+     * @return PostRepository
+     */
+    public function getPostRepository()
+    {
+        if (!$this->postRepository) {
+            throw new \Exception("PostRepository not set");
+        }
+        return $this->postRepository;
     }
 
     /**
@@ -189,6 +218,28 @@ class ContentItemTransformer
      * @param ContentItem $contentItem
      * @param Post $post
      */
+    protected function transformParent(ContentItem $contentItem, Post $post)
+    {
+        $parent = $contentItem->getParent();
+
+        if (! $parent) {
+            $this->getLogger()->info("No parent provided for content item: " . $contentItem->getSlug() . ". Leaving empty.");
+            return;
+        }
+
+        $post->post_parent = $this->getPostRepository()->getPostIDBySlug($parent, $contentItem->getType());
+
+        if (!$post->post_parent) {
+            $this->getLogger()->warning("Parent not found with slug '" . $parent . "' in content item: " . $contentItem->getSlug());
+        } else {
+            $this->getLogger()->info("Parent '" . $parent . "' transformed to " . $post->post_parent);
+        }
+    }
+
+    /**
+     * @param ContentItem $contentItem
+     * @param Post $post
+     */
     protected function transformCategories(ContentItem $contentItem, Post $post)
     {
         $categories = $contentItem->getCategories();
@@ -219,6 +270,30 @@ class ContentItemTransformer
             }
         }
 
+    }
+
+    /**
+     * @param ContentItem $contentItem
+     * @param Post $post
+     */
+    protected function transformCreatedDate(ContentItem $contentItem, Post $post)
+    {
+        /** @var int $created in timestamp format due to yaml parsing */
+        $created = $contentItem->getCreated();
+
+        if (! $created) {
+            $this->getLogger()->warning("No created date provided for content item, setting to now.");
+            $created = time();
+        }
+
+        if (!is_numeric($created)) {
+            $this->getLogger()->warning("Invalid format '$created' for created provided for content item: " . $contentItem->getSlug() . ". Expecting Symfony/YAML parseable date/time. Setting to now.");
+            $created = time();
+        }
+
+        $post->post_date = date("Y-m-d H:i:s", $created);
+
+        $this->getLogger()->info("Created timestamp '$created' transformed to " . $post->post_date);
     }
 
 } 
