@@ -90,8 +90,8 @@ class SettingsController extends Controller
         $controller = $this;
         $proxy = $this->getProxy();
         $proxy->addMenuPage(
-            'Clog Culprits',
-            'Clog Culprits',
+            'Markdown Publisher',
+            'Markdown Publisher',
             'manage_options',
             self::SETTINGS_PAGE_SLUG,
             function () use ($controller) {

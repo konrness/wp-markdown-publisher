@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c62a52c76b987bde6c2351b408b87326",
+    "hash": "2c355c379954753e6bce451cd1e680e6",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -384,88 +384,6 @@
             "time": "2013-12-21 14:45:50"
         },
         {
-            "name": "johnpbloch/wordpress",
-            "version": "3.9.x-dev",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/johnpbloch/wordpress.git",
-                "reference": "33eb4b27e376e87b55e05388ac40a0bb5ee5a341"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress/zipball/33eb4b27e376e87b55e05388ac40a0bb5ee5a341",
-                "reference": "33eb4b27e376e87b55e05388ac40a0bb5ee5a341",
-                "shasum": ""
-            },
-            "require": {
-                "johnpbloch/wordpress-core-installer": "~0.2",
-                "php": ">=5.3.2"
-            },
-            "type": "wordpress-core",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "WordPress Community",
-                    "homepage": "http://wordpress.org/about/"
-                }
-            ],
-            "description": "WordPress is web software you can use to create a beautiful website or blog.",
-            "homepage": "http://wordpress.org/",
-            "keywords": [
-                "blog",
-                "cms"
-            ],
-            "time": "2014-05-08 17:16:09"
-        },
-        {
-            "name": "johnpbloch/wordpress-core-installer",
-            "version": "0.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/johnpbloch/wordpress-core-installer.git",
-                "reference": "a4c08e91be99e858c7778c2f52a4d73820147c2e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress-core-installer/zipball/a4c08e91be99e858c7778c2f52a4d73820147c2e",
-                "reference": "a4c08e91be99e858c7778c2f52a4d73820147c2e",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "1.0.0"
-            },
-            "conflict": {
-                "composer/installers": "<1.0.6"
-            },
-            "require-dev": {
-                "composer/composer": "1.0.*@dev"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "johnpbloch\\Composer\\WordPressCorePlugin"
-            },
-            "autoload": {
-                "psr-0": {
-                    "johnpbloch\\Composer\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "John P. Bloch",
-                    "email": "me@johnpbloch.com"
-                }
-            ],
-            "description": "A custom installer to handle deploying WordPress with composer",
-            "time": "2013-09-09 15:04:54"
-        },
-        {
             "name": "michelf/php-markdown",
             "version": "dev-lib",
             "source": {
@@ -678,12 +596,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "51e3af2081d8497f6552cb3338e8a40541646773"
+                "reference": "1343b576d1401f4a5117cab4e250201ae348143a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/51e3af2081d8497f6552cb3338e8a40541646773",
-                "reference": "51e3af2081d8497f6552cb3338e8a40541646773",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/1343b576d1401f4a5117cab4e250201ae348143a",
+                "reference": "1343b576d1401f4a5117cab4e250201ae348143a",
                 "shasum": ""
             },
             "require": {
@@ -718,7 +636,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
-            "time": "2014-04-28 05:15:04"
+            "time": "2014-05-12 09:28:39"
         },
         {
             "name": "symfony/http-foundation",
@@ -888,12 +806,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Validator.git",
-                "reference": "76783569819ea11512e0825358cef28807ad3d57"
+                "reference": "421b16f1c2426fedc86b39add6b771c7c85c130a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Validator/zipball/76783569819ea11512e0825358cef28807ad3d57",
-                "reference": "76783569819ea11512e0825358cef28807ad3d57",
+                "url": "https://api.github.com/repos/symfony/Validator/zipball/421b16f1c2426fedc86b39add6b771c7c85c130a",
+                "reference": "421b16f1c2426fedc86b39add6b771c7c85c130a",
                 "shasum": ""
             },
             "require": {
@@ -949,7 +867,7 @@
             ],
             "description": "Symfony Validator Component",
             "homepage": "http://symfony.com",
-            "time": "2014-04-28 17:44:51"
+            "time": "2014-05-12 09:28:39"
         },
         {
             "name": "symfony/yaml",
@@ -1006,12 +924,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "052eb5d1ed1b5b7755525e4e7af26faea1619747"
+                "reference": "6af8182fbd3ead19f8f9e01d33e9b09063e1a1b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/052eb5d1ed1b5b7755525e4e7af26faea1619747",
-                "reference": "052eb5d1ed1b5b7755525e4e7af26faea1619747",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/6af8182fbd3ead19f8f9e01d33e9b09063e1a1b0",
+                "reference": "6af8182fbd3ead19f8f9e01d33e9b09063e1a1b0",
                 "shasum": ""
             },
             "require": {
@@ -1055,7 +973,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2014-05-05 08:48:03"
+            "time": "2014-05-14 11:51:43"
         }
     ],
     "packages-dev": [
@@ -1066,8 +984,7 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "nerdery/wp-plugin-framework": 20,
-        "johnpbloch/wordpress": 20
+        "nerdery/wp-plugin-framework": 20
     },
     "platform": {
         "php": ">=5.3"
