@@ -3,7 +3,8 @@ title: Lorem ipsum Test 2
 slug: lorem-ipsum-test-2
 status: publish
 type: page
-parent: example1
+parent: 15
+author: bad
 categories: [test, one, two]
 tags: [tag1, tag2, tag3]
 ---

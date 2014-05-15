@@ -12,9 +12,19 @@ namespace MarkdownPublisher;
 
 require_once 'vendor/autoload.php';
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use MarkdownPublisher\WordPress\Proxy;
+use Monolog\Handler\BufferHandler;
+use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 use Nerdery\Plugin\Factory\Factory;
 use Nerdery\Plugin\Router\Route;
 
+use Symfony\Component\Finder\Finder;
+use Fabricius\Loader\FileLoader;
+use Doctrine\Common\Cache\ArrayCache;
+
+use Monolog\Handler\StreamHandler;
 /**
  * Bootstrap the plugin
  *
@@ -30,6 +40,9 @@ function bootstrap()
     $plugin = $factory->make();
     $plugin = $factory->registerDataServices($plugin);
 
+    // replace the default provided Proxy with enhanced Proxy
+    $plugin['wp-proxy'] = new Proxy();
+
     /*
      * Register controllers
      *
@@ -41,6 +54,41 @@ function bootstrap()
      */
     $plugin['controller.settings'] = new Controller\SettingsController($plugin);
     $plugin['controller.publish'] = new Controller\PublishController($plugin);
+
+    $plugin['logger.handler'] = function() {
+        return new TestHandler();
+    };
+
+    $plugin['logger'] = function ($plugin) {
+
+        $logger = new Logger("Markdown Publisher");
+
+        $logger->pushHandler($plugin['logger.handler']);
+
+        $logger->info("Starting logger");
+
+        return $logger;
+    };
+
+    $plugin['library'] = function () {
+
+        AnnotationRegistry::registerLoader('class_exists');
+
+        $libraryBuilder = LibraryBuilder::create();
+
+        $libraryBuilder->setCacheDir(__DIR__ . '/cache')
+                       ->setExcerptDelimiter('<!-- more -->');
+
+        $library = $libraryBuilder->build();
+
+        $finder = new Finder();
+        $loader = new FileLoader($finder, __DIR__ . '/_content/test');
+
+        $cache = new ArrayCache();
+        $library->registerRepository('MarkdownPublisher\Content\ContentItem', $loader, $cache);
+
+        return $library;
+    };
 
     /*
      * Register routes

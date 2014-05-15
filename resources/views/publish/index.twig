@@ -5,9 +5,13 @@
 
     <hr>
 
-    <h3>Publishing...</h3>
+    <h3>Summary</h3>
 
     Inserted Items: {{insertedContent|length}} <br/>
     Updated Items: {{updatedContent|length}} <br/>
+
+    <h3>Logs</h3>
+    <pre>{% for log in logs %}{{ log.formatted }}{% endfor %}
+    </pre>
 
 {% endblock %}

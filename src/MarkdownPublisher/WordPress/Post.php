@@ -2,14 +2,11 @@
 
 namespace MarkdownPublisher\WordPress;
 
-use Fabricius\Annotation as Fabricius;
-
 /**
  * Class Post
  *
  * @author Konr Ness <konrness@gmail.com>
  * @see http://codex.wordpress.org/Function_Reference/wp_insert_post
- * @Fabricius\ContentItem(repositoryClass="Fabricius\Repository\Repository")
  */
 class Post
 {
@@ -32,87 +29,77 @@ class Post
      * The title of your post.
      *
      * @var string
-     * @Fabricius\Title
      */
-    private $title;
+    public $page_title;
 
     /**
      * The name (slug) for your post
      *
      * @var string
-     * @Fabricius\Slug
      */
-    private $slug;
+    public $post_name;
 
     /**
      * The full text of the post.
      *
      * @var string
-     * @Fabricius\Body
      */
-    private $body;
+    public $post_content;
 
     /**
-     * [ 'draft' | 'publish' | 'pending'| 'future' | 'private' | custom registered status ]
+     * [ 'draft' | 'publish' | 'pending'| 'future' | 'public' | custom registered status ]
      * Default 'draft'.
      *
      * @var string
-     * @Fabricius\Parameter
      */
-    private $status;
+    public $post_status;
 
     /**
      * [ 'post' | 'page' | 'link' | 'nav_menu_item' | custom post type ]
      * Default 'post'.
      *
      * @var string
-     * @Fabricius\Parameter
      */
-    private $type;
+    public $post_type;
 
     /**
      * [ <user ID> ]
      * The user ID number of the author. Default is the current user ID.
      *
      * @var string
-     * @Fabricius\Parameter
      */
-    private $author;
+    public $post_author;
 
     /**
      * [ 'closed' | 'open' ]
      * Pingbacks or trackbacks allowed. Default is the option 'default_ping_status'.
      *
      * @var string
-     * @Fabricius\Parameter
      */
-    private $ping_status;
+    public $ping_status;
 
     /**
      * [ <post ID> ]
      * Sets the parent of the new post, if any. Default 0.
      *
      * @var string
-     * @Fabricius\Parameter
      */
-    private $parent;
+    public $post_parent;
 
     /**
      * [ <order> ]
      * If new post is a page, sets the order in which it should appear in supported menus. Default 0.
      *
      * @var string
-     * @Fabricius\Parameter
      */
-    private $menu_order;
+    public $menu_order;
 
     /**
      * For all your post excerpt needs.
      *
      * @var string
-     * @Fabricius\Excerpt
      */
-    private $excerpt;
+    public $post_excerpt;
 
     /**
      * Format: 0000-00-00 00:00:00
@@ -120,67 +107,28 @@ class Post
      * @todo Make sure that the file date format is parsed to full date/time format
      *
      * @var string
-     * @Fabricius\Created
      */
-    private $created;
+    public $post_date;
 
     /**
      * [ array(<category id>, ...) ]
      *
-     * @todo Parse this from comma-separated list of categories to array of category ids
-     *
      * @var string
-     * @Fabricius\Parameter
      */
-    private $categories;
+    public $post_category;
 
     /**
      * [ '<tag>, <tag>, ...' | array ]
      *
      * @var string
-     * @Fabricius\Parameter
      */
-    private $tags;
+    public $tags_input;
 
     /**
      * Requires name of template file, eg template.php. Default empty.
      *
      * @var string
-     * @Fabricius\Parameter
      */
-    private $page_template;
-
-    /**
-     * @var string
-     *
-     * @Fabricius\Format
-     */
-    private $format;
-
-    /**
-     * Generates an array of data in proper format to be sent to wp_update_post()
-     *
-     * return array
-     */
-    public function toWpPost()
-    {
-        return array(
-            //'ID'             => [ <post id> ] // Are you updating an existing post?
-            'post_content'   => $this->body,
-            'post_name'      => $this->slug,
-            'post_title'     => $this->title,
-            'post_status'    => $this->status,
-            'post_type'      => $this->type,
-            'post_author'    => $this->author, // @todo translate
-            'ping_status'    => $this->ping_status,
-            'post_parent'    => $this->parent,
-            'menu_order'     => $this->menu_order,
-            'post_excerpt'   => $this->excerpt,
-            'post_date'      => $this->created,
-            'post_category'  => $this->categories, // @todo translate
-            'tags_input'     => $this->tags,
-            'page_template'  => $this->page_template,
-        );
-    }
+    public $page_template;
 
 }

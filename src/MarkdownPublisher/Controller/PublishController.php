@@ -2,7 +2,14 @@
 
 namespace MarkdownPublisher\Controller;
 
+use MarkdownPublisher\WordPress\Repository\Author;
+use MarkdownPublisher\WordPress\Transformer\ContentItemTransformer;
 use Nerdery\Plugin\Controller\Controller;
+use MarkdownPublisher\Content\ContentItem;
+use Fabricius\Library;
+use Psr\Log\LoggerInterface;
+use Monolog\Handler\TestHandler;
+
 /**
  * Class PublishController
  *
@@ -47,120 +54,62 @@ class PublishController extends Controller
         $proxy = $this->getProxy();
         $container = $this->getContainer();
 
+        /** @var Library $library */
+        $library = $container['library'];
+
+        /** @var LoggerInterface $logger */
+        $logger = $container['logger'];
+
+        $logger->info("In PublishController");
+
+        $contentItems = $library->getRepository('MarkdownPublisher\Content\ContentItem')->query();
+
         $updatedContent = array();
         $insertedContent = array();
-        foreach ($this->getTestData() as $content)
+        foreach ($contentItems as $contentItem)
         {
+            /** @var ContentItem $contentItem */
+
+            // transform parsed data to WordPress posts
+            $transformer = new ContentItemTransformer();
+
+            $transformer->setLogger($logger);
+            $transformer->setAuthorRepository(new Author($proxy));
+            $transformer->setContentItem($contentItem);
+
+            $post = $transformer->transform();
+
+            /*
             // find an existing page
             $search = array(
-                'name' => $content['post_name'],
-                'post_type' => $content['post_type'],
+                'name' => $post->post_name,
+                'post_type' => $post->post_type,
                 'posts_per_page' => 1,
             );
             $existingPost = \get_posts($search);
 
             if (! $existingPost) {
-                \wp_insert_post($content);
-                $insertedContent[] = $content;
+                \wp_insert_post($contentItem);
+                $insertedContent[] = $contentItem;
             } else {
-                $content['ID'] = $existingPost[0]->ID;
-                \wp_update_post($content);
-                $updatedContent[] = $content;
+                $contentItem['ID'] = $existingPost[0]->ID;
+                \wp_update_post($contentItem);
+                $updatedContent[] = $contentItem;
             }
+            */
         }
 
+        // format log contents
+        /** @var TestHandler $logHandler */
+        $logHandler = $container['logger.handler'];
 
         $output = array(
             'insertedContent' => $insertedContent,
-            'updatedContent' => $updatedContent,
+            'updatedContent'  => $updatedContent,
+            'logs'            => $logHandler->getRecords(),
         );
 
         return $this->render('publish/index.twig', $output);
-    }
-
-    public function getTestData()
-    {
-        return array(
-            array (
-            'post_content' => '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur justo erat, volutpat at risus sit amet, venenatis sodales ante.</p>
-
-<ul>
-<li>Class</li>
-<li>aptent</li>
-<li>taciti</li>
-<li>sociosqu</li>
-<li>ad litora</li>
-<li>torquent per conubia</li>
-<li>nostra</li>
-</ul>
-
-<p>Donec tempus ultricies magna, et hendrerit nisl. Integer id auctor augue. Nullam ut vestibulum lectus. Suspendisse nisl est, ultrices a vulputate ac, dapibus eu tellus. Pellentesque sed libero condimentum, accumsan odio eget, fringilla libero. Integer rhoncus odio eget tortor dictum, sed elementum metus dapibus. Quisque adipiscing pulvinar porta. Proin hendrerit bibendum elit, sed ultrices tellus tincidunt consectetur. Morbi eget ipsum at dui feugiat pharetra in ut mauris.</p>
-',
-            'post_name' => 'lorem-ipsum-test-2',
-            'post_title' => 'Lorem ipsum Test 2',
-            'post_status' => 'publish',
-            'post_type' => 'page',
-            'post_author' => NULL,
-            'ping_status' => NULL,
-            'post_parent' => 'example1',
-            'menu_order' => NULL,
-            'post_excerpt' => '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur justo erat, volutpat at risus sit amet, venenatis sodales ante.</p>
-',
-            'post_date' => NULL,
-            'post_category' =>
-                array (
-                    0 => 'test',
-                    1 => 'one',
-                    2 => 'two',
-                ),
-            'tags_input' =>
-                array (
-                    0 => 'tag1',
-                    1 => 'tag2',
-                    2 => 'tag3',
-                ),
-            'page_template' => NULL,
-        ),
-        array (
-        'post_content' => '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur justo erat, volutpat at risus sit amet, venenatis sodales ante.</p>
-
-<ul>
-<li>Class</li>
-<li>aptent</li>
-<li>taciti</li>
-<li>sociosqu</li>
-<li>ad litora</li>
-<li>torquent per conubia</li>
-<li>nostra</li>
-</ul>
-
-<p>Donec tempus ultricies magna, et hendrerit nisl. Integer id auctor augue. Nullam ut vestibulum lectus. Suspendisse nisl est, ultrices a vulputate ac, dapibus eu tellus. Pellentesque sed libero condimentum, accumsan odio eget, fringilla libero. Integer rhoncus odio eget tortor dictum, sed elementum metus dapibus. Quisque adipiscing pulvinar porta. Proin hendrerit bibendum elit, sed ultrices tellus tincidunt consectetur. Morbi eget ipsum at dui feugiat pharetra in ut mauris.</p>
-',
-        'post_name' => 'lorem-ipsum-test-1',
-        'post_title' => 'Lorem ipsum Test 1',
-        'post_status' => 'publish',
-        'post_type' => 'page',
-        'post_author' => NULL,
-        'ping_status' => NULL,
-        'post_parent' => NULL,
-        'menu_order' => NULL,
-        'post_excerpt' => '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur justo erat, volutpat at risus sit amet, venenatis sodales ante.</p>
-',
-        'post_date' => NULL,
-        'post_category' =>
-            array (
-                0 => 'test',
-                1 => 'one',
-                2 => 'two',
-            ),
-        'tags_input' =>
-            array (
-                0 => 'tag1',
-                1 => 'tag2',
-                2 => 'tag3',
-            ),
-        'page_template' => NULL,
-    ));
     }
 
 }
