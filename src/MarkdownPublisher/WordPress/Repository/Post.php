@@ -66,17 +66,12 @@ class Post extends Repository
 
         if ($existingPost = $this->getExistingPostByPost($post)) {
             // update
-
             $post->ID = $existingPost->ID;
-
             $this->getProxy()->updatePost($post);
-
             return 0;
         } else {
             // insert
-
             $this->getProxy()->insertPost($post);
-
             return 1;
         }
 

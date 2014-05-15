@@ -30,7 +30,7 @@ class Post
      *
      * @var string
      */
-    public $page_title;
+    public $post_title;
 
     /**
      * The name (slug) for your post

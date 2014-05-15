@@ -64,7 +64,7 @@ class ContentItemTransformer
         $post->ping_status   = $contentItem->getPingStatus();
         $post->post_name     = $contentItem->getSlug();
         $post->post_status   = $contentItem->getStatus();
-        $post->page_title    = $contentItem->getTitle();
+        $post->post_title    = $contentItem->getTitle();
         $post->post_type     = $contentItem->getType();
         $post->tags_input    = $contentItem->getTags();
 

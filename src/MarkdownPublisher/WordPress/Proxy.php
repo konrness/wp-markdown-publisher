@@ -65,12 +65,19 @@ class Proxy extends NerderyProxy
      * To work as expected, it is necessary to pass the ID of the post to be updated.
      *
      * @see http://codex.wordpress.org/Function_Reference/wp_update_post
-     * @param WP_Post $post
-     * @return int The value 0 on failure. The post ID on success.
+     * @param \WP_Post $post
+     * @return int The post ID on success.
+     * @throws \Exception on failure
      */
     public function updatePost($post)
     {
-        return wp_update_post($post);
+        $result = wp_update_post($post, true);
+
+        if ($result instanceof WP_Error) {
+            throw new \Exception("WordPress Fatal Error on Update Post: " . $result->get_error_message());
+        }
+
+        return $result;
     }
 
     /**
@@ -78,11 +85,18 @@ class Proxy extends NerderyProxy
      * It sanitizes variables, does some checks, fills in missing variables like date/time, etc.
      *
      * @see http://codex.wordpress.org/Function_Reference/wp_insert_post
-     * @param WP_Post $post
-     * @return int The value 0 on failure. The post ID on success.
+     * @param \WP_Post $post
+     * @return int The post ID on success.
+     * @throws \Exception on failure
      */
     public function insertPost($post)
     {
-        return wp_update_post($post);
+        $result = wp_insert_post($post, true);
+
+        if ($result instanceof \WP_Error) {
+            throw new \Exception("WordPress Fatal Error on Insert Post: " . $result->get_error_message());
+        }
+
+        return $result;
     }
 } 

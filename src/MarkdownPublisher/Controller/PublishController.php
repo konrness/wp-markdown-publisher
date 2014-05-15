@@ -60,8 +60,6 @@ class PublishController extends Controller
         /** @var LoggerInterface $logger */
         $logger = $container['logger'];
 
-        $logger->info("In PublishController");
-
         // set timezone so yaml parsing can parse dates correctly
         $oldTimezone = date_default_timezone_get();
         date_default_timezone_set('America/Chicago');
@@ -85,7 +83,7 @@ class PublishController extends Controller
         foreach ($contentItems as $contentItem)
         {
             $logger->info("---------------------------");
-            $logger->info("Starting content item #" . ++$i);
+            $logger->info(" Starting content item #" . ++$i);
             $logger->info("---------------------------");
 
             /** @var ContentItem $contentItem */
@@ -94,15 +92,20 @@ class PublishController extends Controller
 
             $post = $transformer->transform();
 
-            $isInserted = $postRepository->insertOrUpdate($post);
+            try {
+                $isInserted = $postRepository->insertOrUpdate($post);
 
-            if ($isInserted) {
-                $logger->info("Inserted new " . $post->post_type . " with slug '" . $post->post_name . "'");
-                $insertedContent[] = $post;
-            } else {
-                $logger->info("Updated existing " . $post->post_type . " with slug '" . $post->post_name . "'");
-                $updatedContent[] = $post;
+                if ($isInserted) {
+                    $logger->info("Inserted new " . $post->post_type . " with slug '" . $post->post_name . "'");
+                    $insertedContent[] = $post;
+                } else {
+                    $logger->info("Updated existing " . $post->post_type . " with slug '" . $post->post_name . "'");
+                    $updatedContent[] = $post;
+                }
+            } catch (\Exception $e) {
+                $logger->error($e->getMessage(), array('post' => $post));
             }
+
         }
 
         // return timezone
